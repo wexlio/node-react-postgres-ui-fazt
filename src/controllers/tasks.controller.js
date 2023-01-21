@@ -4,7 +4,7 @@ const getAllTask = async (req, res, next) => {
   try {
     const result = await pool.query("select * from task");
 
-    console.log(result);
+    console.log(result.rows);
     res.json(result.rows);
   } catch (error) {
     next(error);

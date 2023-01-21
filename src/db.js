@@ -10,5 +10,9 @@ const credentials = {
 };
 
 const pool = new Pool(credentials);
+pool ? console.log("conectado") : console.log("error de coneccion")
+
+// console.log(pool)
+
 
 module.exports = pool;
