@@ -7,8 +7,8 @@ import {
   Button,
   CircularProgress,
 } from "@mui/material";
-import { useState } from "react";
-import { useNavigate } from "react-router-dom";
+import { useState, useEffect } from "react";
+import { useNavigate, useParams } from "react-router-dom";
 
 export default function TaskForm() {
   const [task, setTask] = useState({
@@ -17,21 +17,30 @@ export default function TaskForm() {
   });
 
   const [loading, setLoading] = useState(false);
+  const [editing, setEditing] = useState(false);
 
   const navigate = useNavigate();
+  const params = useParams();
 
   const handleSubmit = async (e) => {
     e.preventDefault();
 
     setLoading(true);
 
-    const res = await fetch("http://localhost:4000/tasks", {
-      method: "POST",
-      body: JSON.stringify(task),
-      headers: { "Content-type": "application/json" },
-    });
-    const data = await res.json();
-    console.log(data);
+    if (editing) {
+      console.log("editandoo");
+      await fetch(`http://localhost:4000/tasks/${params.id}`, {
+        method: "PUT",
+        headers: { "Content-type": "application/json" },
+        body: JSON.stringify(task),
+      });
+    } else {
+      await fetch("http://localhost:4000/tasks", {
+        method: "POST",
+        body: JSON.stringify(task),
+        headers: { "Content-type": "application/json" },
+      });
+    }
 
     setLoading(false);
 
@@ -41,6 +50,19 @@ export default function TaskForm() {
   const handleChange = (e) => {
     setTask({ ...task, [e.target.name]: e.target.value });
   };
+
+  const loadTask = async (id) => {
+    const res = await fetch(`http://localhost:4000/tasks/${id}`);
+    const data = await res.json();
+    setTask({ title: data.title, description: data.description });
+    setEditing(true);
+  };
+
+  useEffect(() => {
+    if (params.id) {
+      loadTask(params.id);
+    }
+  }, [params.id]);
 
   return (
     <Grid
@@ -58,7 +80,7 @@ export default function TaskForm() {
           }}
         >
           <Typography variant="5" textAlign="center" color="white">
-            Create Task
+            {editing ? 'Edit task' : 'Create task'}
           </Typography>
           <CardContent>
             <form onSubmit={handleSubmit}>
@@ -70,6 +92,7 @@ export default function TaskForm() {
                   margin: ".5rem 0",
                 }}
                 name="title"
+                value={task.title}
                 onChange={handleChange}
                 inputProps={{ style: { color: "white" } }}
                 InputLabelProps={{ style: { color: "#777" } }}
@@ -84,16 +107,22 @@ export default function TaskForm() {
                   margin: ".5rem 0",
                 }}
                 name="description"
+                value={task.description}
                 onChange={handleChange}
                 inputProps={{ style: { color: "white" } }}
                 InputLabelProps={{ style: { color: "#777" } }}
               />
 
-              <Button type="submit" variant="contained" color="primary" disabled={task.title === "" || task.description === ""}>
+              <Button
+                type="submit"
+                variant="contained"
+                color="primary"
+                disabled={task.title === "" || task.description === ""}
+              >
                 {loading ? (
                   <CircularProgress color="inherit" size={24} />
                 ) : (
-                  "Create"
+                  "Save"
                 )}
               </Button>
             </form>
