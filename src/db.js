@@ -10,7 +10,12 @@ const credentials = {
 };
 
 const pool = new Pool(credentials);
-pool ? console.log("conectado") : console.log("error de coneccion")
+
+pool.connect((error) => {
+  if (error) {
+    console.log("Fail conection. Error: ", error)
+  } else console.log("Conection success")
+})
 
 // console.log(pool)
 

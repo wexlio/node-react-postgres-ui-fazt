@@ -5,6 +5,8 @@ import { useNavigate } from "react-router-dom";
 export default function TaskList() {
   const [tasks, setTasks] = useState([]);
 
+  let err = ""
+
   const navigate = useNavigate()
 
   const mostrarData = async () => {
@@ -28,8 +30,16 @@ export default function TaskList() {
         method: "DELETE",
       });
       console.log(res);
-      const filter = tasks.filter((task) => task.id !== id);
-      setTasks(filter);
+
+      err = res.status
+
+      if ( err === 401) {
+        console.log("no tienes permiso para realizar esta accion")
+      } else {
+        const filter = tasks.filter((task) => task.id !== id);
+        setTasks(filter);
+      }
+
     } catch (error) {
       console.error("Ocurrio algo");
     }
@@ -66,7 +76,14 @@ export default function TaskList() {
               <Button
                 variant="contained"
                 color="inherit"
-                onClick={() => {navigate(`/tasks/${task.id}/edit`)}}
+                onClick={() => {
+                  if (task.status === 401) {
+                    console.log("no tienes permisos para realizar esta accion")
+                  } else {
+                    console.log(err, 999)
+                    navigate(`/tasks/${task.id}/edit`)
+                  }
+                }}
               >
                 Edit
               </Button>
