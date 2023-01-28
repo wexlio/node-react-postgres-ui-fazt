@@ -2,22 +2,41 @@ const jwt = require("jsonwebtoken");
 const pool = require("../db");
 
 const verifyToken = async (req, res, next) => {
-  const token = req.header("auth-token");
-  if (!token) {
-    return res.status(401).json({ error: "Acceso denegado" });
-  }
-  try {
-    const verificar = jwt.verify(token, process.env.TOKEN_SECRET);
-    req.user = verificar;
+  const result = await pool.query("select * from users");
+
+  console.log(result.rows.length, 99999);
+
+  if (result.rows.length <= 0) {
     next();
-  } catch (error) {
-    res.status(401).json({ error: "token no valido" });
+    return res.status(201);
+  } else {
+    const token = req.header("auth-token");
+
+    if (!token) {
+      return res.status(401).json({ error: "Acceso denegado" });
+    }
+    try {
+      const verificar = jwt.verify(token, process.env.TOKEN_SECRET);
+      req.user = verificar;
+      next();
+    } catch (error) {
+      res.status(401).json({ error: "token no valido" });
+    }
   }
 };
 
 const validateAdmin = async (req, res, next) => {
   try {
     console.log(req.user);
+
+    const result = await pool.query("select * from users");
+
+    console.log(result.rows.length, 99999);
+
+    if (result.rows.length <= 0) {
+      next();
+      return;
+    }
 
     const { id } = req.user;
 
