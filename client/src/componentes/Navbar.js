@@ -18,7 +18,8 @@ export default function Navbar() {
         <Container>
           <Toolbar>
             <Typography sx={{ flexGrow: 1 }}>
-              <Link style={{textDecoration: 'none', color: '#eee'}} to="/">PERN stack</Link>
+              <Link style={{textDecoration: 'none', color: '#eee', fontSize: "1.5rem"}} to="/">App Register</Link>
+              <Link style={{textDecoration: 'none', color: '#eee', marginLeft: "10px"}} to="/login">login</Link>
             </Typography>
 
             <Button

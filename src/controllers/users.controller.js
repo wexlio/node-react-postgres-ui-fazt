@@ -101,17 +101,23 @@ const login = async (req, res) => {
 
   const response = await pool.query("select * from users where correo = $1", [correo]);
 
-  const validatedPass = await bcryptjs.compare(password, response.rows[0].password)
+  try {
+    
+    const validatedPass = await bcryptjs.compare(password, response.rows[0].password)
+    const token = jwt.sign({
+      name: response.rows[0].name,
+      id: response.rows[0].id
+    }, process.env.TOKEN_SECRET)
+  
+  
+    !validatedPass
+        ? res.status(404).json({ mensagge: "Clave invalida" })
+        : res.header('auth-token', token).status(201).json({ mensagge: "Bienvenido", error: null, data: {token} })
+  } catch (error) {
+    console.error(error,"ocurrio algo")
+  }
 
-  const token = jwt.sign({
-    name: response.rows[0].name,
-    id: response.rows[0].id
-  }, process.env.TOKEN_SECRET)
 
-
-  !validatedPass
-      ? res.status(404).json({ mensagge: "Clave invalida" })
-      : res.header('auth-token', token).status(201).json({ mensagge: "Bienvenido", error: null, data: {token} })
 
 };
 

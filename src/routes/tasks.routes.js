@@ -47,6 +47,9 @@ router.put("/users/:id", [verifyToken, validateAdmin], updateUser);
 //Routes de login/register
 
 router.post("/login", login);
+router.get("/login", (req, res) => {
+  res.send({msg: "Login"})
+});
 
 //Routes de admin o dashboard
 
