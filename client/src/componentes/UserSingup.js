@@ -10,14 +10,14 @@ import React from "react";
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 
-export function UserLogin() {
-  // const [user1, setUser1] = useState([]);
+export function UserSingup() {
+  // const [user, setUser] = useState([]);
 
   // const userRegister = async () => {
-  //   const response = await fetch("http://localhost:5000/cookie");
+  //   const response = await fetch("http://localhost:4000/users");
   //   const data = await response.json();
   //   console.log(data);
-  //   setUser1(data);
+  //   setUser(data);
   // };
 
   // useEffect(() => {
@@ -27,6 +27,7 @@ export function UserLogin() {
   const navigate = useNavigate();
 
   const [user, setUser] = useState({
+    fullname: "",
     username: "",
     password: "",
   });
@@ -38,16 +39,13 @@ export function UserLogin() {
   const handleSumbit = async (e) => {
     e.preventDefault();
     try {
-
-      const response = await fetch("http://localhost:7000/signin", {
+      await fetch("http://localhost:7000/signup", {
         method: "POST",
         body: JSON.stringify(user),
         headers: { "Content-type": "application/json" },
       });
 
-      const data = await response.json();
-      console.log('LA DATA ES: ', data.user.id)
-      navigate(`/profile/${data.user.id}`);
+      navigate("/");
 
     } catch (error) {
       console.error("el error ostrados es: ", error);
@@ -81,10 +79,23 @@ export function UserLogin() {
             }}
           >
             {/* {editing ? "Edit task" : "Create task"} */}
-            LOGIN
+            SINGUP
           </Typography>
           <CardContent>
             <form onSubmit={handleSumbit}>
+              <TextField
+                variant="filled"
+                label="Write your full name"
+                sx={{
+                  display: "block",
+                  margin: ".5rem 0",
+                }}
+                name="fullname"
+                value={user.fullname}
+                onChange={handleChange}
+                inputProps={{ style: { color: "white" } }}
+                InputLabelProps={{ style: { color: "#777" } }}
+              />
               <TextField
                 variant="filled"
                 label="Write your username"
@@ -105,8 +116,8 @@ export function UserLogin() {
                   display: "block",
                   margin: ".5rem 0",
                 }}
-                type="password"
                 name="password"
+                type="password"
                 value={user.password}
                 onChange={handleChange}
                 inputProps={{ style: { color: "white" } }}
@@ -125,10 +136,10 @@ export function UserLogin() {
               >
                 Done
                 {/* {loading ? (
-                  <CircularProgress color="inherit" size={24} />
-                ) : (
-                  "Save"
-                )} */}
+                    <CircularProgress color="inherit" size={24} />
+                  ) : (
+                    "Save"
+                  )} */}
               </Button>
             </form>
           </CardContent>

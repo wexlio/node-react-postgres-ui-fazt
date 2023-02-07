@@ -26,11 +26,11 @@ router.get("/tasks", getAllTask);
 
 router.get("/tasks/:id", getTask);
 
-router.post("/tasks", [verifyToken, validateAdmin], createTask);
+router.post("/tasks", createTask);
 
-router.delete("/tasks/:id", [verifyToken, validateAdmin], deleteTask);
+router.delete("/tasks/:id", deleteTask);
 
-router.put("/tasks/:id", [verifyToken, validateAdmin], updateTask);
+router.put("/tasks/:id", updateTask);
 
 //Routes de users
 
@@ -38,15 +38,16 @@ router.get("/users", getAllUsers);
 
 router.get("/users/:id", getUser);
 
-router.post("/users", [verifyToken, validateAdmin], createUser); // register
+router.post("/users", createUser); // register
 
-router.delete("/users/:id", [verifyToken, validateAdmin], deleteUser);
+router.delete("/users/:id", deleteUser);
 
-router.put("/users/:id", [verifyToken, validateAdmin], updateUser);
+router.put("/users/:id", updateUser);
 
 //Routes de login/register
 
-router.post("/login", login);
+router.post("/login", login);// login
+
 router.get("/login", (req, res) => {
   res.send({msg: "Login"})
 });

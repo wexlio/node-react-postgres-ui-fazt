@@ -8,6 +8,7 @@ import {
 } from "@mui/material";
 import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
+import Timestamp from "react-timestamp";
 
 export default function TaskList() {
   const [tasks, setTasks] = useState([]);
@@ -24,12 +25,12 @@ export default function TaskList() {
 
   const mostrarData = async () => {
     try {
-      const res = await fetch(`http://localhost:4000/tasks`);
+      const res = await fetch(`http://localhost:7000/tasks`);
       const data = await res.json();
 
       setTasks(data);
     } catch (error) {
-      console.error("Ocurrio algo");
+      console.error("Ocurrio algo desed get primcipañ");
     }
   };
 
@@ -39,22 +40,16 @@ export default function TaskList() {
 
   const handleDelete = async (id) => {
     try {
-      const res = await fetch(`http://localhost:4000/tasks/${id}`, {
+      await fetch(`http://localhost:7000/tasks/${id}`, {
         method: "DELETE",
       });
-      const statusRes = await res.json();
-      console.log(statusRes);
+      // const statusRes = await res.json();
+      // console.log(statusRes);
+      const filter = tasks.filter((task) => task.id !== id);
+      setTasks(filter);
 
-      if (statusRes.error === "Acceso denegado") {
-        console.log("no tienes permiso para realizar esta accion");
-        setAviso(true);
-        return;
-      } else {
-        const filter = tasks.filter((task) => task.id !== id);
-        setTasks(filter);
-      }
     } catch (error) {
-      console.error("Ocurrio algo");
+      console.error("Ocurrio algo inisperpento");
     }
   };
 
@@ -91,9 +86,16 @@ export default function TaskList() {
                 color: "#ddd",
               }}
             >
-              <Typography>{task.title}</Typography>
+              <Typography>{task?.title}</Typography>
 
-              <Typography>{task.description}</Typography>
+              <Typography>{task?.description}</Typography>
+
+              <Timestamp
+                style={{ fontSize: "10px" }}
+                relative
+                date={task?.created_at}
+                autoUpdate
+              />
             </div>
 
             <div>

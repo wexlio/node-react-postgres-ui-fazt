@@ -1,6 +1,7 @@
 const pool = require("../db");
 const bcryptjs = require("bcryptjs");
-const jwt = require('jsonwebtoken')
+const jwt = require("jsonwebtoken");
+const passport = require('../lib/passport')
 
 const getAllUsers = async (req, res, next) => {
   try {
@@ -37,9 +38,12 @@ const createUser = async (req, res, next) => {
     const resultUsers = await pool.query("select * from users");
 
     if (resultUsers.rows.length <= 0) {
-      req.body.role = 'admin'
-    } else if (resultUsers.rows.length > 0 && (req.body.role === null || req.body.role === undefined)) {
-      req.body.role = 'user'
+      req.body.role = "admin";
+    } else if (
+      resultUsers.rows.length > 0 &&
+      (req.body.role === null || req.body.role === undefined)
+    ) {
+      req.body.role = "user";
     }
 
     const salt = await bcryptjs.genSalt(10);
@@ -99,26 +103,42 @@ const login = async (req, res) => {
 
   const { correo, password } = req.body;
 
-  const response = await pool.query("select * from users where correo = $1", [correo]);
+  const response = await pool.query("select * from users where correo = $1", [
+    correo,
+  ]);
 
   try {
-    
-    const validatedPass = await bcryptjs.compare(password, response.rows[0].password)
-    const token = jwt.sign({
-      name: response.rows[0].name,
-      id: response.rows[0].id
-    }, process.env.TOKEN_SECRET)
-  
-  
+    const validatedPass = await bcryptjs.compare(
+      password,
+      response.rows[0].password
+    );
+    const token = jwt.sign(
+      {
+        name: response.rows[0].name,
+        id: response.rows[0].id,
+        exp: Math.floor(Date.now() / 1000) + 60 * 60 / 60,
+      },
+      process.env.TOKEN_SECRET
+    );
+
+    // const serialized = serialize("MyTokenName", token, {
+    //   httpOnly: true,
+    //   secure: process.env.NODE_ENV === "production",
+    //   sameSite: "none",
+    //   maxAge: 1000 * 60 * 60 * 0.5,
+    //   path: "/",
+    // });
+
     !validatedPass
-        ? res.status(404).json({ mensagge: "Clave invalida" })
-        : res.header('auth-token', token).status(201).json({ mensagge: "Bienvenido", error: null, data: {token} })
+      ? res.status(404).json({ mensagge: "Clave invalida" })
+      : res
+          .cookie("auth-token", token)
+          .header("auth-token", token)
+          .status(201)
+          .json({ mensagge: "Bienvenido", error: null, data: { token } });
   } catch (error) {
-    console.error(error,"ocurrio algo")
+    console.error(error, "ocurrio algo");
   }
-
-
-
 };
 
 const register = async () => {};

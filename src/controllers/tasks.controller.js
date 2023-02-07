@@ -35,6 +35,8 @@ const createTask = async (req, res, next) => {
       [title, description]
     );
 
+    req.flash('success', 'task saved successfully')
+
     console.log(result);
     res.json(result.rows[0]);
   } catch (error) {

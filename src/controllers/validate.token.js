@@ -12,13 +12,23 @@ const verifyToken = async (req, res, next) => {
   } else {
     const token = req.header("auth-token");
 
-    if (!token) {
+    const token2 = console.log(req.data)
+
+    console.log(req.user)
+    if (!token && !token2) {
       return res.status(401).json({ error: "Acceso denegado" });
     }
     try {
-      const verificar = jwt.verify(token, process.env.TOKEN_SECRET);
-      req.user = verificar;
-      next();
+      if (token) {
+        const verificar = jwt.verify(token, process.env.TOKEN_SECRET);
+        req.user = verificar;
+        next();
+      } else if (token2) {
+        const verificar = jwt.verify(token2, process.env.TOKEN_SECRET);
+        req.user = verificar;
+        console.log(req.user)
+        next();
+      }
     } catch (error) {
       res.status(401).json({ error: "token no valido" });
     }

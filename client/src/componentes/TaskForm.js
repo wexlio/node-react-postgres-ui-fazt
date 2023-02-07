@@ -13,7 +13,7 @@ import { useNavigate, useParams } from "react-router-dom";
 export default function TaskForm() {
   const [task, setTask] = useState({
     title: "",
-    description: "",
+    description: ""
   });
 
   const [loading, setLoading] = useState(false);
@@ -29,13 +29,13 @@ export default function TaskForm() {
 
     if (editing) {
       console.log("editandoo");
-      await fetch(`http://localhost:4000/tasks/${params.id}`, {
+      await fetch(`http://localhost:7000/tasks/${params.id}`, {
         method: "PUT",
         headers: { "Content-type": "application/json" },
         body: JSON.stringify(task),
       });
     } else {
-      await fetch("http://localhost:4000/tasks", {
+      await fetch("http://localhost:7000/tasks/add", {
         method: "POST",
         body: JSON.stringify(task),
         headers: { "Content-type": "application/json" },
@@ -52,9 +52,13 @@ export default function TaskForm() {
   };
 
   const loadTask = async (id) => {
-    const res = await fetch(`http://localhost:4000/tasks/${id}`);
+    const res = await fetch(`http://localhost:7000/tasks/${id}`);
     const data = await res.json();
-    setTask({ title: data.title, description: data.description });
+    console.log(data)
+    setTask({
+      title: data[0].title,
+      description: data[0].description
+    });
     setEditing(true);
   };
 
