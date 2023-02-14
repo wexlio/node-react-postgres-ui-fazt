@@ -8,7 +8,7 @@ import {
   Menu,
 } from "@mui/material";
 import { Link, useNavigate } from "react-router-dom";
-import React from "react";
+import React, { useEffect, useState } from "react";
 import { styled, alpha } from "@mui/material/styles";
 import MenuItem from "@mui/material/MenuItem";
 import ListAltIcon from "@mui/icons-material/ListAlt";
@@ -74,11 +74,31 @@ export default function Navbar() {
 
   const navigate = useNavigate();
 
+  // const handleLogout = async () => {
+  //   handleClose();
+  //   localStorage.clear();
+  //   navigate("/");
+  // };
+
+  const [tasks, setTasks] = useState([]);
+
   const handleLogout = async () => {
-    handleClose();
-    localStorage.clear();
-    navigate("/");
+    try {
+      handleClose();
+      localStorage.clear();
+      const res = await fetch(`http://localhost:7000/logout`);
+      const data = await res.json();
+      
+      setTasks(data);
+      return navigate("/");
+    } catch (error) {
+      return console.error("Ocurrio algo desed get primcipañ");
+    }
   };
+
+  // useEffect(() => {
+  //   handleLogout();
+  // }, []);
 
   return (
     <Box sx={{ flexGrow: 1 }}>

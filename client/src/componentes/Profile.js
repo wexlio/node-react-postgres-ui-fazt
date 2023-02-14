@@ -15,12 +15,16 @@ function Cookie() {
     const res = await fetch(`http://localhost:7000/profile/${id}`);
     const data = await res.json();
     console.log(data)
-    setUser(
-      {
-      username: data[0].username,
-      id: data[0].id
+    if (data !== 'no estas logeado') {
+      setUser(
+        {
+        username: data[0].username,
+        id: data[0].id
+      }
+      );
+    } else {
+      setUser('hola')
     }
-    );
   };
 
   useEffect(() => {
@@ -31,9 +35,29 @@ function Cookie() {
 
   const navigate = useNavigate();
 
+  const [tasks, setTasks] = useState([]);
+
   const handleLogout = async () => {
-    localStorage.clear();
-    navigate("/");
+    try {
+      // handleClose();
+      // localStorage.clear();
+      // const res = await fetch(`http://localhost:7000/logout`);
+      // const data = await res.json();
+      
+      
+      await fetch("http://localhost:7000/logout", {
+        method: "POST",
+        body: JSON.stringify(''),
+        headers: { "Content-type": "application/json" },
+      })
+
+      // const data = await response.json();
+      // setTasks(data);
+      // console.log(data)
+      // return navigate("/");
+    } catch (error) {
+      return console.error("Ocurrio algo desed get primcipañ");
+    }
   };
 
   return (

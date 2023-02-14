@@ -46,7 +46,7 @@ export function UserLogin() {
       });
 
       const data = await response.json();
-      console.log('LA DATA ES: ', data.user.id)
+      console.log(data)
       navigate(`/profile/${data.user.id}`);
 
     } catch (error) {

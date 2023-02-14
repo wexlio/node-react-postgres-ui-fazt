@@ -12,17 +12,8 @@ import Timestamp from "react-timestamp";
 
 export default function TaskList() {
   const [tasks, setTasks] = useState([]);
-  const [aviso, setAviso] = useState(false);
-
-  const navigate = useNavigate();
-
-  const handleClose = (event, reason) => {
-    // if (reason === "clickaway") {
-    //   return
-    // }
-    setAviso(false);
-  };
-
+  
+  
   const mostrarData = async () => {
     try {
       const res = await fetch(`http://localhost:7000/tasks`);
@@ -33,11 +24,20 @@ export default function TaskList() {
       console.error("Ocurrio algo desed get primcipañ");
     }
   };
-
+  
   useEffect(() => {
     mostrarData();
   }, []);
+  const [aviso, setAviso] = useState(false);
 
+  const navigate = useNavigate();
+  const handleClose = (event, reason) => {
+    // if (reason === "clickaway") {
+    //   return
+    // }
+    setAviso(false);
+  };
+  
   const handleDelete = async (id) => {
     try {
       await fetch(`http://localhost:7000/tasks/${id}`, {

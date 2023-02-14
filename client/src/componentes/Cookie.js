@@ -4,9 +4,21 @@ import { useNavigate } from "react-router-dom";
 function Cookie() {
   const navigate = useNavigate();
 
+  const [tasks, setTasks] = useState([]);
+
   const handleLogout = async () => {
-    localStorage.clear();
-    navigate("/UserLogin");
+    try {
+      handleClose();
+      localStorage.clear();
+      const res = await fetch(`http://localhost:7000/logout`);
+      const data = await res.json();
+      
+      setTasks(data);
+      console.log('señoooooooooor')
+      return navigate("/");
+    } catch (error) {
+      return console.error("Ocurrio algo desed get primcipañ");
+    }
   };
 
   return (
